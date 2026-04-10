@@ -8,16 +8,16 @@ pipeline {
     stages {
         stage('Building') {
           steps {
-                sh 'pip install -r requirements.txt'
+            sh 'pip install -r requirements.txt'
           }
         }
         stage('Testing') {
           steps {
-                sh 'python -m unittest'
+            sh 'python -m unittest'
           }
         }
-          stage('Deploying') {
-          steps{
+        stage('Deploying') {
+          steps {
             script {
               sh '''
               docker rm -f jenkins
@@ -27,23 +27,22 @@ pipeline {
             }
           }
         }
-          stage('User Acceptance') {
-            steps {
-                input message: 'Proceed to push to main', ok: 'Yes'
-            }
-            }
+        stage('User Acceptance') {
+          steps {
+            input message: 'Proceed to push to main', ok: 'Yes'
           }
-          stage('Pushing and Merging'){
-            parallel {
-                stage('Pushing Image') {
-                  environment {
-                      DOCKERHUB_CREDENTIALS = credentials('docker_jenkins')
-                  }
-                  steps {
+        }
+        stage('Pushing and Merging') {
+          parallel {
+            stage('Pushing Image') {
+              environment {
+                DOCKERHUB_CREDENTIALS = credentials('docker_jenkins')
+              }
+              steps {
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                      sh 'docker push $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG'
-                  }
-                }
+                sh 'docker push $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG'
+              }
+            }
             stage('Merging') {
               steps {
                 echo 'Merging done'
@@ -57,3 +56,4 @@ pipeline {
         sh 'docker logout'
       }
     }
+}
