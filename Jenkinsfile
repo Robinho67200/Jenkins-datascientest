@@ -48,7 +48,7 @@ pipeline {
                 }
             stage('Merging') {
               steps {
-                echoo 'Merging done'
+                echo 'Merging done'
               }
             }
           }
