@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Building') {
           steps {
-            sh 'python3 -m pip install -r requirements.txt'
+            sh 'python3 -m pip install -r requirements.txt --break-system-packages'
           }
         }
         stage('Testing') {
